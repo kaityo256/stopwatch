@@ -14,10 +14,17 @@ Wrap a region which you want to measure
 #include <unistd.h>
 
 void func() {
-  static stopwatch::timer<> timer("test");
-  timer.start();
-  usleep(10000);
-  timer.stop();
+  static stopwatch::timer<> timer1("func1");
+  static stopwatch::timer<> timer2("func2");
+  timer1.start(); // Measure this whole function
+
+  timer2.start(); // Measure some part of this function
+  usleep(5000);
+  timer2.stop();
+
+  usleep(5000);
+
+  timer1.stop();
 }
 
 int main() {
@@ -43,7 +50,8 @@ $ ./a.out
 7
 8
 9
-test: elapsed 403689122 (10 times) Average 4.03689e+07
+func2: elapsed 194801680 (10 times) Average 1.94802e+07
+func1: elapsed 385134752 (10 times) Average 3.85135e+07
 ```
 
 ## Why
@@ -51,6 +59,7 @@ test: elapsed 403689122 (10 times) Average 4.03689e+07
 We want to measure the elapsed time for a function which is called many times.
 But the function is sometimes inlined, and `perf` cannot capture the function.
 This library allows you to measure the time of such inlined funciton.
+It is also possible to measure a part of some function.
 
 ## Reference
 
