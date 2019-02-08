@@ -6,7 +6,7 @@ A single-header C++ stopwatch.
 
 ## Usage
 
-Wrap a region which you want to measure
+Wrap a region which you want to measure.
 
 ```cpp
 #include "stopwatch.hpp"
@@ -57,9 +57,9 @@ func1: elapsed 385134752 (10 times) Average 3.85135e+07
 ## Why
 
 We want to measure the elapsed time for a function which is called many times.
-But the function is sometimes inlined, and `perf` cannot capture the function.
-This library allows you to measure the time of such inlined funciton.
-It is also possible to measure a part of some function.
+But the function is sometimes inlined, and some profiler such as `perf` cannot capture it.
+This library allows you to measure the elapsed time of such inlined funcitons.
+It is also possible to measure a part of a function.
 
 ## Reference
 
