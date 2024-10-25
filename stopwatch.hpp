@@ -24,7 +24,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#if defined(__APPLE__) && defined(__MACH__) && defined(__arm64__)
+#define USE_CHRONO
+#else
+#endif
+
 #pragma once
+#include <chrono>
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -32,6 +38,7 @@ SOFTWARE.
 
 namespace stopwatch {
 
+#ifndef USE_CHRONO
 struct rdtscp_clock {
   std::uint64_t sum; // Elapsed Cycle
   std::uint64_t now;
@@ -47,8 +54,29 @@ struct rdtscp_clock {
     return sum;
   }
 };
+#endif
 
+struct chrono_clock {
+  std::chrono::milliseconds::rep sum; // Elapsed Time
+  std::chrono::high_resolution_clock::time_point now;
+  std::uint32_t id;
+  void start() {
+    now = std::chrono::high_resolution_clock::now();
+  }
+  void stop() {
+    auto t = std::chrono::high_resolution_clock::now();
+    sum += std::chrono::duration_cast<std::chrono::milliseconds>(t - now).count();
+  }
+  std::chrono::milliseconds::rep elapsed() {
+    return sum;
+  }
+};
+
+#ifdef USE_CHRONO
 template <class Clock = rdtscp_clock>
+#else
+template <class Clock = chrono_clock>
+#endif
 struct timer {
   std::string name;
   Clock clock;
